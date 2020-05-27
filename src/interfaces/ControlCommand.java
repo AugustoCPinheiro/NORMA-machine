@@ -1,6 +1,9 @@
 package interfaces;
+
+import java.util.ArrayList;
+
 import models.Expression;
 
 public interface ControlCommand extends Command {
-	public void postAction(Expression[] expressions);
+	public abstract void postAction(String terms, ArrayList<Expression> expressions);
 }

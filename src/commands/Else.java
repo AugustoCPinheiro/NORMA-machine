@@ -3,18 +3,14 @@ package commands;
 import java.util.ArrayList;
 
 import interfaces.Command;
-import managers.FunctionsManager;
 import models.Expression;
 
-public class Goto implements Command {
+public class Else implements Command {
 	@Override
 	public void action(String terms, ArrayList<Expression> expressions) {
-		System.out.println(FunctionsManager.functions.get(terms));
-		ArrayList<Expression> functionExpressions = FunctionsManager.functions.get(terms);
-		for (Expression expression : functionExpressions) {
+		for (Expression expression : expressions) {
 			expression.getCommand().action(expression.getTerms(), expression.getExpressions());
 		}
-
 	}
 
 	@Override
@@ -22,4 +18,6 @@ public class Goto implements Command {
 		// TODO Auto-generated method stub
 
 	}
+
+
 }

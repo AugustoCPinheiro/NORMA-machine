@@ -1,7 +1,11 @@
 package interfaces;
 
-public interface Command {
+import java.util.ArrayList;
 
-	public void action(String terms) ;
-	public void parse(String terms)throws Exception;
+import models.Expression;
+
+public interface Command {
+	public void action(String terms, ArrayList<Expression> expressions);
+
+	public void parse(String terms) throws Exception;
 }

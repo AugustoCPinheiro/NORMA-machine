@@ -1,4 +1,5 @@
 package util;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,43 +13,132 @@ import factories.CommandFactory;
 import managers.FunctionsManager;
 import models.Expression;
 
-
-
 public class Reader {
 	private File file;
-	
+
 	public Reader(String file) {
-	
+
 		this.file = new File(file);
-		
+
 	}
-	private ArrayList<Expression> readSubcode(BufferedReader br) throws IOException{
+
+	private ArrayList<Expression> readSubcode(BufferedReader br) throws IOException {
 		String line = "";
 		ArrayList<Expression> instructions = new ArrayList<Expression>();
-		while((line = br.readLine()) != null) {
-			if(!line.equals("\\")) {
+		while ((line = br.readLine()) != null) {
+			System.out.println("side - " + line);
+			if (!line.equals("\\")) {
 				String[] tokens = line.trim().split(" ");
-//				System.out.println(tokens[0]);
-				
+
 				try {
-					
-					String [] args = Arrays.copyOfRange(tokens, 1, tokens.length);
-					
-					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),  String.join(" ", args));
+
+					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
+							String.join(" ", args));
 					System.out.println(expression);
 					instructions.add(expression);
-			}catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("Malformed instructions");
-			}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Malformed instructions");
+				}
 
-		}else {
-			break;
+			} else {
+				break;
+			}
 		}
+
+		return instructions;
 	}
-	
+
+	private ArrayList<Expression> readWhileSubcode(BufferedReader br) throws IOException {
+		String line = "";
+		ArrayList<Expression> instructions = new ArrayList<Expression>();
+		while ((line = br.readLine()) != null) {
+			System.out.println("sideWhile - " + line);
+			if (!line.equals("|")) {
+				String[] tokens = line.trim().split(" ");
+
+				try {
+
+					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
+							String.join(" ", args));
+
+					instructions.add(expression);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Malformed instructions");
+				}
+
+			} else {
+				break;
+			}
+		}
+		return instructions;
+	}
+	private ArrayList<Expression> readElseSubcode(BufferedReader br) throws IOException {
+		String line = "";
+		ArrayList<Expression> instructions = new ArrayList<Expression>();
+		while ((line = br.readLine()) != null) {
+			System.out.println("sideWhile - " + line);
+			if (!line.equals("/")) {
+				String[] tokens = line.trim().split(" ");
+
+				try {
+
+					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
+							String.join(" ", args));
+
+					instructions.add(expression);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Malformed instructions");
+				}
+
+			} else {
+				break;
+			}
+		}
 		return instructions;
 	}
 	
+	private ArrayList<Expression> readIfSubcode(BufferedReader br) throws IOException {
+		String line = "";
+		ArrayList<Expression> instructions = new ArrayList<Expression>();
+		while ((line = br.readLine()) != null) {
+			System.out.println("sideIf - " + line);
+			if (!line.equals("/")) {
+				String[] tokens = line.trim().split(" ");
+
+				try {
+					if(line.contains("else")) {
+						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+						Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
+								String.join(" ", args), readElseSubcode(br));
+
+						instructions.add(expression);
+						break;
+					}
+					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
+							String.join(" ", args));
+
+					instructions.add(expression);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Malformed instructions");
+				}
+
+			} else {
+				break;
+			}
+		}
+		return instructions;
+
+	}
+
 	public ArrayList<Expression> loadInstructions() {
 		FileReader r = null;
 		BufferedReader br = null;
@@ -56,34 +146,50 @@ public class Reader {
 		try {
 			r = new FileReader(file);
 			br = new BufferedReader(r);
-			
+
 			String line = "";
-			while((line = br.readLine()) != null) {
-				
-				if(!line.isEmpty()){
+			while ((line = br.readLine()) != null) {
+				System.out.println("main - " + line);
+				if (!line.isEmpty()) {
 					String[] tokens = line.trim().split(" ");
-//					System.out.println(tokens[0]);
-					
+
 					try {
-						if(tokens[0].contains(":")) {
-						
+						if (tokens[0].contains(":")) {
+
 							FunctionsManager.functions.put(tokens[0].substring(line.indexOf(":") + 1), readSubcode(br));
 							continue;
 						}
-						String [] args = Arrays.copyOfRange(tokens, 1, tokens.length);
-						
-						Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),  String.join(" ", args));
+						Expression expression = null;
+
+						if (line.contains("while")) {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+							expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+									readWhileSubcode(br));
+
+						} else {
+							if (line.contains("if")) {
+								String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+								expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+										readIfSubcode(br));
+							} else {
+								String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+								expression = new Expression(CommandFactory.getCommand(tokens[0]),
+										String.join(" ", args));
+							}
+						}
+
 						instructions.add(expression);
-					}catch (ArrayIndexOutOfBoundsException e) {
+					} catch (ArrayIndexOutOfBoundsException e) {
 						System.out.println("Malformed instructions");
 					}
 				}
-			
+
 			}
-			
-		}catch(IOException e) {	
+
+		} catch (IOException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				br.close();
 				r.close();

@@ -1,4 +1,5 @@
 package models;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import interfaces.Command;
@@ -6,23 +7,24 @@ import interfaces.Command;
 public  class Expression {
 	private Command command;
 	private String terms;
-	private Expression[] expressions;
+	private ArrayList<Expression> expressions;
 	
 	public Expression(Command command, String terms) {
 		this.command = command;
 		this.terms = terms;
 	}
 
-	public Expression(Command command, String terms, Expression[] expressions) {	
+	public Expression(Command command, String terms, ArrayList<Expression> expressions) {	
 		this.command = command;
 		this.terms = terms;
 		this.expressions = expressions;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Expression [command=" + command + ", terms=" + terms + ", expressions=" + Arrays.toString(expressions)
-				+ "]";
+		return "Expression [command=" + command + ", terms=" + terms + ", expressions=" + expressions + "]";
 	}
 
 	public String getTerms() {
@@ -40,6 +42,15 @@ public  class Expression {
 	public void setCommand(Command command) {
 		this.command = command;
 	}
+
+	public ArrayList<Expression> getExpressions() {
+		return expressions;
+	}
+
+	public void setExpressions(ArrayList<Expression> expressions) {
+		this.expressions = expressions;
+	}
+	
 	
 	
 }
