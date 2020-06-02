@@ -1,16 +1,8 @@
-inc 3
-inc 2
-if is0 3
-inc 20
-inc 21
-else
-inc 3
-/
-inc 4
-inc 4
-inc 4
-goto macro
-:macro
-add 1 2
-\
-
+while is0 3
+	inc 0
+	if is0 4
+		inc 4
+	else
+		inc 3
+	endif
+endwhile

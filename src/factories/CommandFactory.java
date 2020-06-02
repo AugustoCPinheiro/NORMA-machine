@@ -6,6 +6,7 @@ import commands.Else;
 import commands.Goto;
 import commands.If;
 import commands.Inc;
+import commands.Init;
 import commands.Set;
 import commands.Set0;
 import commands.While;
@@ -34,6 +35,8 @@ public class CommandFactory {
 			return new Else();
 		case "if":
 			return new If();
+		case "init":
+			return new Init();
 		default: {
 
 			return null;

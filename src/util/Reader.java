@@ -15,7 +15,9 @@ import models.Expression;
 
 public class Reader {
 	private File file;
-
+	private static final String FUNC_MARKER = "endfun";
+	private static final String IF_MARKER = "endif";
+	private static final String WHILE_MARKER = "endwhile";
 	public Reader(String file) {
 
 		this.file = new File(file);
@@ -27,16 +29,38 @@ public class Reader {
 		ArrayList<Expression> instructions = new ArrayList<Expression>();
 		while ((line = br.readLine()) != null) {
 			System.out.println("side - " + line);
-			if (!line.equals("\\")) {
+			line = line.trim();
+			if (!line.equals(FUNC_MARKER)) {
+				
 				String[] tokens = line.trim().split(" ");
 
 				try {
 
-					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+					if (tokens[0].contains(":")) {
 
-					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
-							String.join(" ", args));
-					System.out.println(expression);
+						FunctionsManager.functions.put(tokens[0].substring(line.indexOf(":") + 1), readSubcode(br));
+						continue;
+					}
+					Expression expression = null;
+
+					if (line.contains("while")) {
+						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+						expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+								readWhileSubcode(br));
+
+					} else {
+						if (line.contains("if")) {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+							expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+									readIfSubcode(br));
+						} else {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+							expression = new Expression(CommandFactory.getCommand(tokens[0]),
+									String.join(" ", args));
+						}
+					}
+					
 					instructions.add(expression);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					System.out.println("Malformed instructions");
@@ -55,15 +79,38 @@ public class Reader {
 		ArrayList<Expression> instructions = new ArrayList<Expression>();
 		while ((line = br.readLine()) != null) {
 			System.out.println("sideWhile - " + line);
-			if (!line.equals("|")) {
+			line = line.trim();
+			if (!line.equals(WHILE_MARKER)) {
+				
 				String[] tokens = line.trim().split(" ");
 
 				try {
+					if (tokens[0].contains(":")) {
 
-					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+						FunctionsManager.functions.put(tokens[0].substring(line.indexOf(":") + 1), readSubcode(br));
+						continue;
+					}
+					Expression expression = null;
 
-					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
-							String.join(" ", args));
+					if (line.contains("while")) {
+						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+						expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+								readWhileSubcode(br));
+
+					} else {
+						if (line.contains("if")) {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+							expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+									readIfSubcode(br));
+						} else {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+							expression = new Expression(CommandFactory.getCommand(tokens[0]),
+									String.join(" ", args));
+						}
+					}
+
+					
 
 					instructions.add(expression);
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -81,16 +128,37 @@ public class Reader {
 		ArrayList<Expression> instructions = new ArrayList<Expression>();
 		while ((line = br.readLine()) != null) {
 			System.out.println("sideWhile - " + line);
-			if (!line.equals("/")) {
+			line = line.trim();
+			if (!line.equals(IF_MARKER)) {
+				
 				String[] tokens = line.trim().split(" ");
 
 				try {
 
-					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+					if (tokens[0].contains(":")) {
 
-					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
-							String.join(" ", args));
+						FunctionsManager.functions.put(tokens[0].substring(line.indexOf(":") + 1), readSubcode(br));
+						continue;
+					}
+					Expression expression = null;
 
+					if (line.contains("while")) {
+						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+						expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+								readWhileSubcode(br));
+
+					} else {
+						if (line.contains("if")) {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+							expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+									readIfSubcode(br));
+						} else {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+							expression = new Expression(CommandFactory.getCommand(tokens[0]),
+									String.join(" ", args));
+						}
+					}
 					instructions.add(expression);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					System.out.println("Malformed instructions");
@@ -108,10 +176,13 @@ public class Reader {
 		ArrayList<Expression> instructions = new ArrayList<Expression>();
 		while ((line = br.readLine()) != null) {
 			System.out.println("sideIf - " + line);
-			if (!line.equals("/")) {
+			line = line.trim();
+			if (!line.equals(IF_MARKER)) {
+				
 				String[] tokens = line.trim().split(" ");
 
 				try {
+					
 					if(line.contains("else")) {
 						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
 
@@ -121,10 +192,30 @@ public class Reader {
 						instructions.add(expression);
 						break;
 					}
-					String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+					if (tokens[0].contains(":")) {
 
-					Expression expression = new Expression(CommandFactory.getCommand(tokens[0]),
-							String.join(" ", args));
+						FunctionsManager.functions.put(tokens[0].substring(line.indexOf(":") + 1), readSubcode(br));
+						continue;
+					}
+					Expression expression = null;
+
+					if (line.contains("while")) {
+						String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+						expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+								readWhileSubcode(br));
+
+					} else {
+						if (line.contains("if")) {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+							expression = new Expression(CommandFactory.getCommand(tokens[0]), String.join(" ", args),
+									readIfSubcode(br));
+						} else {
+							String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+							expression = new Expression(CommandFactory.getCommand(tokens[0]),
+									String.join(" ", args));
+						}
+					}
 
 					instructions.add(expression);
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -151,6 +242,7 @@ public class Reader {
 			while ((line = br.readLine()) != null) {
 				System.out.println("main - " + line);
 				if (!line.isEmpty()) {
+					line = line.trim();
 					String[] tokens = line.trim().split(" ");
 
 					try {
