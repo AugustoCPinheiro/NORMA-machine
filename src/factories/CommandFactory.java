@@ -3,6 +3,7 @@ package factories;
 import commands.Add;
 import commands.Dec;
 import commands.Else;
+import commands.Function;
 import commands.Goto;
 import commands.If;
 import commands.Inc;
@@ -39,7 +40,7 @@ public class CommandFactory {
 			return new Init();
 		default: {
 
-			return null;
+			return new Function(command);
 		}
 		}
 

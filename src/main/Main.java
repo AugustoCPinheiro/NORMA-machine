@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 
+import managers.ExecutionManager;
 import managers.RegisterManager;
 import models.Expression;
 import models.Register;
@@ -17,11 +18,11 @@ public class Main {
 		for (int i = 0; i < REGISTER_NUM; i++) {
 			RegisterManager.registers[i] = new Register(i);
 		}
+		
 		ArrayList<Expression> instructions = reader.loadInstructions();
-		for (Expression expression : instructions) {
-			expression.getCommand().action(expression.getTerms(), expression.getExpressions());
-		}
-
+		ExecutionManager.instructions = instructions;
+		ExecutionManager.execute();
+		
 		for (Register register : RegisterManager.registers) {
 			System.out.println(register);
 		}
